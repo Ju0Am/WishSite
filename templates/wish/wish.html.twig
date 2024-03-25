@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello List{% endblock %}
+
+{% block body %}
+    <section>
+        <div class="flex_between">
+            {%  if currentPage > 1 %}
+                <a href="{{ path('app_wish', {'page': currentPage - 1}) }}">Previous page</a>
+            {% endif %}
+            <div> -- Page {{ currentPage }} -- </div>
+            {% if currentPage < pagesMax %}
+                <a href="{{ path('app_wish', {'page' : currentPage + 1}) }}">Next page</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <table>
+        <tr>
+            <td>LIST</td>
+            <td>DETAIL</td>
+        </tr>
+        {% for wish in wishes %}
+            <tr>
+                <td>{{ wish.id }}</td>
+                <td>{{ wish.titre }}</td>
+                <td>{{ wish.dateCreated|date('D d/m/Y H:i')}}</td>
+                <td><a href="{{ path('app_detail', {'id': wish.id}) }}">detail</a></td>
+            </tr>
+        {% endfor %}
+
+    </table>
+{% endblock %}

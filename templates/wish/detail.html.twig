@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wish Detail{% endblock %}
+
+{% block body %}
+    <h1>Wish Detail</h1>
+    <dl>
+        <dt>ID:</dt>
+        <dd>{{ wish.id }}</dd>
+        <dt>Title:</dt>
+        <dd>{{ wish.titre }}</dd>
+        <dt>Description:</dt>
+        <dd>{{ wish.description }}</dd>
+        <dt>Author:</dt>
+        <dd>{{ wish.author }}</dd>
+        <img src="{{ asset('posters/wish/' ~ wish.poster) }}">
+        <dt>Date de création:</dt>
+        <dd>{{ wish.dateCreated|date('D d/m/Y H:i')}}</dd>
+        <dt>Date Update</dt>
+        <dd>{{ wish.dateUpdated|date('D d/m/Y H:i') }}</dd>
+    </dl>
+    <a href="{{ path('app_wish') }}">Back to Wishlist</a>
+
+    <form method="post" action="{{ path('app_delete', {'id': wish.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce wish ?')">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wish.id) }}">
+        <button type="submit" class="btn btn-danger">Supprimer ce wish</button>
+    </form>
+
+    <a href="{{ path('app_edit', {'id': wish.id}) }}" class="btn btn-primary">Modifier ce Wish</a>
+
+{% endblock %}
