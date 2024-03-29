@@ -43,6 +43,14 @@ class Wish
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $poster = null;
 
+    #[ORM\ManyToOne(inversedBy: 'wishes')]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id')]
+    private ?Category $category = null;
+
+    #[ORM\ManyToOne(inversedBy: 'wishes')]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user = null;
+
 
     public function getId(): ?int
     {
@@ -133,4 +141,36 @@ class Wish
         return $this;
     }
 
+    #[ORM\PreRemove]
+    public function deleteImage(): static
+    {
+        if($this->getPoster() && file_exists('posters/series/' . $this->getPoster())) {
+            unlink('posters/series/' . $this->getPoster());
+        }
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
 }

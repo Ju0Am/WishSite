@@ -19,11 +19,16 @@
     <body>
         <header>
             <a href="{{ path('app_main') }}">Accueil</a>
-            <a href="{{ path('app_about') }}">About us</a>
-            <a href="{{ path('app_wish') }}">List</a>
-            <a href="{{ path('app_detail', {'id': 1}) }}">Detail</a>
-            <a href="{{ path('app_create') }}">Create</a>
 
+            {% if is_granted('IS_AUTHENTICATED') %}
+                <a href="{{ path('app_about') }}">About us</a>
+                <a href="{{ path('app_wish') }}">List</a>
+                <a href="{{ path('app_create') }}">Create</a>
+                <a href="{{ path('app_logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ path('app_login') }}">Login</a>
+                <a href="{{ path('app_register') }}">Register</a>
+            {% endif %}
         </header>
 
         <h1>Bucket List</h1>

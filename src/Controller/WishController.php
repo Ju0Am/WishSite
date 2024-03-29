@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Wish;
 use App\Form\WishFormType;
+use App\Helper\Censurator;
 use App\Repository\WishRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -49,8 +50,8 @@ class WishController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name:'app_create')]
-    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger) : Response
+    #[Route('/profile/create', name:'app_create')]
+    public function create(Censurator $censured,Request $request, EntityManagerInterface $em, SluggerInterface $slugger) : Response
     {
         $wish = new Wish();
         $form = $this->createForm(WishFormType::class, $wish);
@@ -64,6 +65,11 @@ class WishController extends AbstractController
                 $posterFile->move('posters/wish/',$fileName);
                 $wish->setPoster($fileName);
 	        }
+
+            $user = $this->getUser();
+            $wish->setAuthor($user->getUserIdentifier());
+            $wish->setUser($user);
+            $wish->setDescription($censured->purify($wish->getDescription()));
             $em->persist($wish);
             $em->flush();
 
@@ -77,7 +83,7 @@ class WishController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name:'app_delete')]
+    #[Route('/admin/delete/{id}', name:'app_delete')]
     public function delete(EntityManagerInterface $em, Wish $wish) : Response
     {
         $em->remove($wish);
@@ -87,7 +93,7 @@ class WishController extends AbstractController
         return $this->redirectToRoute('app_wish');
     }
 
-    #[Route('/wish/{id}/edit', name:'app_edit')]
+    #[Route('/profile/wish/{id}/edit', name:'app_edit')]
     public function edit(EntityManagerInterface $em, Request $request, Wish $wish, SluggerInterface $slugger) : Response
     {
         $form = $this->createForm(WishFormType::class)
@@ -95,6 +101,11 @@ class WishController extends AbstractController
         $form->handleRequest($request);
 
     if($form->isSubmitted()&& $form->isValid() ){
+
+        if($form->has('delete_image')&& $form->get('delete_image')->getData()){
+            $wish->deleteImage();
+            $wish->setPoster(null);
+        }
 
         if($form->get('poster_file')->getData() instanceof UploadedFile){
             $posterFile = $form->get('poster_file')->getData();
@@ -116,6 +127,8 @@ class WishController extends AbstractController
        'wishForm' => $form->createView()
     ]);
     }
+
+
 
 
 }

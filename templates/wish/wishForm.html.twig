@@ -4,7 +4,16 @@
 
 {% block body %}
 
-{{form(wishForm)}}
+    {% if serie is defined and serie.poster is not empty %}
+        <img src="{{ asset('posters/series/' ~ serie.poster) }}">
+    {% endif %}
+
+    {{form_start(wishForm)}}
+        {{form_row(wishForm.titre)}}
+        {{form_row(wishForm.description)}}
+        {{form_row(wishForm.isPublished)}}
+    {{form_end(wishForm)}}
+
 
 
 {% endblock %}

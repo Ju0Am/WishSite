@@ -13,6 +13,8 @@
         <dd>{{ wish.description }}</dd>
         <dt>Author:</dt>
         <dd>{{ wish.author }}</dd>
+        <dt>Category:</dt>
+        <dd>{{ wish.category.name }}</dd>
         <img src="{{ asset('posters/wish/' ~ wish.poster) }}">
         <dt>Date de création:</dt>
         <dd>{{ wish.dateCreated|date('D d/m/Y H:i')}}</dd>
@@ -21,12 +23,15 @@
     </dl>
     <a href="{{ path('app_wish') }}">Back to Wishlist</a>
 
+{% if is_granted('ROLE_ADMIN') %}
     <form method="post" action="{{ path('app_delete', {'id': wish.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce wish ?')">
         <input type="hidden" name="_method" value="DELETE">
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ wish.id) }}">
         <button type="submit" class="btn btn-danger">Supprimer ce wish</button>
     </form>
+{% endif %}
 
+{% if is_granted('ROLE_USER') %}
     <a href="{{ path('app_edit', {'id': wish.id}) }}" class="btn btn-primary">Modifier ce Wish</a>
-
+{% endif %}
 {% endblock %}
